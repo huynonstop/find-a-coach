@@ -1,4 +1,4 @@
-# find-coach
+# Find coach - A Vue 3 Udemy project
 
 ## Project setup
 ```
