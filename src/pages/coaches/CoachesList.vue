@@ -1,12 +1,10 @@
 <template>
-  <section>
-    Filter
-  </section>
+  <coach-filter v-model:filter="activeFilter"></coach-filter>
   <section>
     <base-card>
       <div class="controls">
         <base-button mode="outline">Refresh</base-button>
-        <base-button as="router-link" to="/register"
+        <base-button v-if="!isCoach" as="router-link" to="/register"
           >Register as coach</base-button
         >
       </div>
@@ -21,16 +19,37 @@
 
 <script>
 import CoachItem from '@/components/coaches/CoachItem.vue';
+import CoachFilter from '../../components/coaches/CoachFilter.vue';
 export default {
   components: {
     CoachItem,
+    CoachFilter,
+  },
+  data() {
+    return {
+      activeFilter: { frontend: true, backend: true, career: true },
+    };
   },
   computed: {
     coaches() {
-      return this.$store.getters['coaches/coaches'];
+      return this.$store.getters['coaches/coaches'].filter(coach => {
+        for (const filter in this.activeFilter) {
+          if (this.activeFilter[filter] && coach.areas.includes(filter))
+            return true;
+        }
+        return false;
+      });
     },
     hasCoaches() {
       return this.$store.getters['coaches/hasCoaches'];
+    },
+    isCoach() {
+      return this.$store.getters['coaches/isCoach'];
+    },
+  },
+  methods: {
+    setFilter(filter) {
+      this.activeFilter = filter;
     },
   },
 };
