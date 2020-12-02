@@ -13,7 +13,7 @@ export default {
   components: { CoachForm },
   methods: {
     submitCoachData(data) {
-      this.$store.dispatch('coaches/addCoach', data);
+      this.$store.dispatch('coaches/registerCoach', data);
       this.$router.replace('/coaches');
     },
   },

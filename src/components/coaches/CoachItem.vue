@@ -11,7 +11,11 @@
       ></base-badge>
     </div>
     <div class="actions">
-      <base-button mode="outline" as="router-link" :to="coachContactLink"
+      <base-button
+        v-if="!isUser"
+        mode="outline"
+        as="router-link"
+        :to="coachContactLink"
         >Contact</base-button
       >
       <base-button as="router-link" :to="coachLink">Details</base-button>
@@ -21,7 +25,7 @@
 
 <script>
 export default {
-  props: ['id', 'firstName', 'lastName', 'hourlyRate', 'areas'],
+  props: ['id', 'firstName', 'lastName', 'hourlyRate', 'areas', 'isUser'],
   computed: {
     fullName() {
       return this.firstName + this.lastName;

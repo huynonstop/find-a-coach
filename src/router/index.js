@@ -14,6 +14,9 @@ const routes = [
     component: CoachDetails,
     props: true,
     children: [{ path: 'contact', component: ContactCoach }],
+    meta: {
+      basePath: '/coaches/',
+    },
   },
   { path: '/register', component: CoachRegister },
   { path: '/requests', component: RequestsList },

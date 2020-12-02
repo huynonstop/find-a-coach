@@ -4,7 +4,7 @@
       <h2>{{ fullname }}</h2>
       <h3>${{ rate }}/hour</h3>
     </base-card>
-    <base-card>
+    <base-card v-if="!isUser">
       <h2>Interested? Reach out now!</h2>
       <base-button as="router-link" :to="contactLink">
         Contact
@@ -35,10 +35,10 @@ export default {
   },
   computed: {
     fullname() {
-      return this.selectedCoach.firstName + ' ' + this.selectedCoach.lastname;
+      return this.selectedCoach.firstName + ' ' + this.selectedCoach.lastName;
     },
     contactLink() {
-      return this.$route.path + '/contact';
+      return this.$route.meta.basePath + this.id + '/contact';
     },
     areas() {
       return this.selectedCoach.areas;
@@ -48,6 +48,9 @@ export default {
     },
     description() {
       return this.selectedCoach.description;
+    },
+    isUser() {
+      return this.$store.getters.userId === this.id;
     },
   },
   created() {
