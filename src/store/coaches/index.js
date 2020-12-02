@@ -5,6 +5,7 @@ export default {
   state() {
     return {
       coaches: [],
+      fetchTimestamp: null,
     };
   },
   mutations: {
@@ -13,6 +14,9 @@ export default {
     },
     setCoaches(state, payload) {
       state.coaches = payload;
+    },
+    setFetchTimestamp(state) {
+      state.fetchTimestamp = new Date().getTime();
     },
   },
   actions: {
@@ -35,7 +39,11 @@ export default {
         id: userId,
       });
     },
-    async loadCoaches(context) {
+    async loadCoaches(context, { forceRefresh }) {
+      if (!forceRefresh && !context.getters.shouldUpdate) {
+        return;
+      }
+
       const response = await fetch(`${databaseURL}/coaches.json`);
       const responseData = await response.json();
       if (!response.ok) {
@@ -62,6 +70,7 @@ export default {
         arrayCoaches.push(coach);
       }
       context.commit('setCoaches', arrayCoaches);
+      context.commit('setFetchTimestamp');
     },
   },
   getters: {
@@ -75,6 +84,14 @@ export default {
       const coaches = getters.coaches;
       const userId = rootGetters.userId;
       return coaches.some(coach => coach.id === userId);
+    },
+    shouldUpdate(state) {
+      const lastFetch = state.fetchTimestamp;
+      if (!lastFetch) {
+        return true;
+      }
+      const current = new Date().getTime();
+      return current - lastFetch > 60 * 1000;
     },
   },
 };

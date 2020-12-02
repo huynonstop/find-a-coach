@@ -1,5 +1,6 @@
 <template>
-  <form @submit.prevent="submitForm">
+  <base-spinner v-if="isLoading"></base-spinner>
+  <form @submit.prevent="submitForm" v-else>
     <div class="form-control">
       <label for="email">Your E-Mail</label>
       <input type="email" id="email" v-model.trim="email" />
@@ -10,6 +11,9 @@
     </div>
     <p class="errors" v-if="!isValid">
       Check your input and re-submit the form
+    </p>
+    <p class="errors" v-else-if="error">
+      {{ error }}
     </p>
     <div class="actions">
       <base-button>Send Message</base-button>
@@ -24,11 +28,14 @@ export default {
       email: '',
       message: '',
       isValid: true,
+      isLoading: false,
+      error: null,
     };
   },
   methods: {
-    submitForm() {
+    async submitForm() {
       this.isValid = true;
+      this.error = null;
       if (
         this.email === '' ||
         !this.email.includes('@') ||
@@ -37,14 +44,20 @@ export default {
         this.isValid = false;
         return;
       }
-      const coachId = this.$route.params.id;
-      console.log(coachId);
-      this.$store.dispatch('requests/contactCoach', {
-        email: this.email,
-        message: this.message,
-        coachId,
-      });
-      this.$router.replace('/coaches/' + coachId);
+      this.isLoading = true;
+      try {
+        const coachId = this.$route.params.id;
+        await this.$store.dispatch('requests/contactCoach', {
+          email: this.email,
+          message: this.message,
+          coachId,
+        });
+        this.$router.replace('/coaches/' + coachId);
+      } catch (error) {
+        this.error = error.message || 'Something went wrong';
+      } finally {
+        this.isLoading = false;
+      }
     },
   },
 };

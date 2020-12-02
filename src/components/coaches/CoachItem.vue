@@ -16,8 +16,8 @@
         mode="outline"
         as="router-link"
         :to="coachContactLink"
-        >Contact</base-button
-      >
+        >Contact
+      </base-button>
       <base-button as="router-link" :to="coachLink">Details</base-button>
     </div>
   </li>

@@ -6,7 +6,7 @@
     </base-card>
     <base-card v-if="!isUser">
       <h2>Interested? Reach out now!</h2>
-      <base-button as="router-link" :to="contactLink">
+      <base-button as="router-link" :to="contactLink" v-if="!isContact">
         Contact
       </base-button>
       <router-view></router-view>
@@ -51,6 +51,9 @@ export default {
     },
     isUser() {
       return this.$store.getters.userId === this.id;
+    },
+    isContact() {
+      return this.$route.name === 'contact-coach';
     },
   },
   created() {

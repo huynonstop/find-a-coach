@@ -1,6 +1,7 @@
 <template>
   <li>
     <div>
+      From: {{ userId }}
       <a :href="emailLink">{{ email }}</a>
     </div>
     <p>{{ message }}</p>
@@ -9,7 +10,7 @@
 
 <script>
 export default {
-  props: ['email', 'message'],
+  props: ['email', 'message', 'userId'],
   computed: {
     emailLink() {
       return 'mailto:' + this.email;
