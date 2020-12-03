@@ -22,13 +22,17 @@ export default {
   actions: {
     async registerCoach(context, data) {
       const userId = context.rootGetters.userId;
+      const token = context.rootGetters.token;
       const coachData = {
         ...data,
       };
-      const response = await fetch(`${databaseURL}/coaches/${userId}.json`, {
-        method: 'PUT',
-        body: JSON.stringify(coachData),
-      });
+      const response = await fetch(
+        `${databaseURL}/coaches/${userId}.json?auth=${token}`,
+        {
+          method: 'PUT',
+          body: JSON.stringify(coachData),
+        }
+      );
       const responseData = await response.json();
       if (!response.ok) {
         const error = new Error(responseData.message || 'Failed');

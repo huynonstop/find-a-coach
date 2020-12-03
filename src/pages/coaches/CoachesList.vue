@@ -1,34 +1,39 @@
 <template>
-  <base-dialog :show="!!error" title="Whoops" @close="confirmError">
-    <p>{{ error }}</p>
-  </base-dialog>
-  <coach-filter v-model:filter="activeFilter"></coach-filter>
-  <section>
-    <base-card>
-      <div class="controls">
-        <base-button mode="outline" @click="loadCoaches(true)"
-          >Refresh</base-button
-        >
-        <base-button
-          v-if="!isLoading && !isCoach"
-          as="router-link"
-          to="/register"
-          >Register as coach</base-button
-        >
-      </div>
-      <base-spinner v-if="isLoading"></base-spinner>
-      <ul v-else-if="hasCoaches">
-        <coach-item
-          v-for="coach of coaches"
-          :key="coach.id"
-          :isUser="userId === coach.id"
-          v-bind="coach"
-        >
-        </coach-item>
-      </ul>
-      <h3 v-else>No coaches founded, :'(</h3>
-    </base-card>
-  </section>
+  <main>
+    <base-dialog :show="!!error" title="Whoops" @close="confirmError">
+      <p>{{ error }}</p>
+    </base-dialog>
+    <coach-filter v-model:filter="activeFilter"></coach-filter>
+    <section>
+      <base-card>
+        <div class="controls">
+          <base-button mode="outline" @click="loadCoaches(true)"
+            >Refresh</base-button
+          >
+          <base-button v-if="!isAuth" as="router-link" to="/auth"
+            >Login</base-button
+          >
+          <base-button
+            v-else-if="!isLoading && !isCoach"
+            as="router-link"
+            to="/register"
+            >Register as coach</base-button
+          >
+        </div>
+        <base-spinner v-if="isLoading"></base-spinner>
+        <ul v-else-if="hasCoaches">
+          <coach-item
+            v-for="coach of coaches"
+            :key="coach.id"
+            :isUser="userId === coach.id"
+            v-bind="coach"
+          >
+          </coach-item>
+        </ul>
+        <h3 v-else>No coaches founded, :'(</h3>
+      </base-card>
+    </section>
+  </main>
 </template>
 
 <script>
@@ -64,6 +69,9 @@ export default {
     },
     userId() {
       return this.$store.getters.userId;
+    },
+    isAuth() {
+      return this.$store.getters.isAuth;
     },
   },
   methods: {

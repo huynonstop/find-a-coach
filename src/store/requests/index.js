@@ -37,7 +37,10 @@ export default {
     },
     async loadRequests(context) {
       const userId = context.rootGetters.userId;
-      const response = await fetch(`${databaseURL}/requests/${userId}.json`);
+      const token = context.rootGetters.token;
+      const response = await fetch(
+        `${databaseURL}/requests/${userId}.json?auth=${token}`
+      );
       const responseData = await response.json();
       if (!response.ok) {
         const error = new Error(responseData.message || 'Failed');

@@ -1,23 +1,25 @@
 <template>
-  <base-dialog :show="!!error" title="Whoops" @close="confirmError">
-    <p>{{ error }}</p>
-  </base-dialog>
-  <section>
-    <base-card>
-      <header>
-        <h2>Request Received</h2>
-      </header>
-      <base-spinner v-if="isLoading"></base-spinner>
-      <ul v-else-if="hasRequests">
-        <request-item
-          v-for="request of receivedRequests"
-          :key="request.id"
-          v-bind="request"
-        ></request-item>
-      </ul>
-      <h3 v-else>You haven't received any requests yet!</h3>
-    </base-card>
-  </section>
+  <main>
+    <base-dialog :show="!!error" title="Whoops" @close="confirmError">
+      <p>{{ error }}</p>
+    </base-dialog>
+    <section>
+      <base-card>
+        <header>
+          <h2>Request Received</h2>
+        </header>
+        <base-spinner v-if="isLoading"></base-spinner>
+        <ul v-else-if="hasRequests">
+          <request-item
+            v-for="request of receivedRequests"
+            :key="request.id"
+            v-bind="request"
+          ></request-item>
+        </ul>
+        <h3 v-else>You haven't received any requests yet!</h3>
+      </base-card>
+    </section>
+  </main>
 </template>
 
 <script>

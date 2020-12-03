@@ -4,14 +4,33 @@
       <h1><router-link to="/">Find Coaches</router-link></h1>
       <ul>
         <li><router-link to="/coaches">All Coaches</router-link></li>
-        <li><router-link to="/requests">Requests</router-link></li>
+        <template v-if="isAuth">
+          <li>
+            <router-link to="/requests">Requests</router-link>
+          </li>
+          <li>
+            <base-button @click="logout">Logout</base-button>
+          </li>
+        </template>
+        <li v-else><router-link to="/auth">Login</router-link></li>
       </ul>
     </nav>
   </header>
 </template>
 
 <script>
-export default {};
+export default {
+  computed: {
+    isAuth() {
+      return this.$store.getters.isAuth;
+    },
+  },
+  methods: {
+    logout() {
+      this.$store.dispatch('logout');
+    },
+  },
+};
 </script>
 
 <style scoped>

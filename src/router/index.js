@@ -5,7 +5,7 @@ import CoachesList from '../pages/coaches/CoachesList.vue';
 import CoachRegister from '../pages/coaches/CoachRegister.vue';
 import ContactCoach from '../pages/requests/ContactCoach.vue';
 import RequestsList from '../pages/requests/RequestsList.vue';
-
+import UserAuth from '../pages/auth/UserAuth.vue';
 const routes = [
   { path: '/', redirect: '/coaches' },
   { path: '/coaches', component: CoachesList },
@@ -24,6 +24,7 @@ const routes = [
       basePath: '/coaches/',
     },
   },
+  { path: '/auth', component: UserAuth },
   { path: '/register', component: CoachRegister },
   { path: '/requests', component: RequestsList },
   { path: '/:notFound(.*)', component: NotFound },

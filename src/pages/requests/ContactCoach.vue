@@ -1,24 +1,26 @@
 <template>
-  <base-spinner v-if="isLoading"></base-spinner>
-  <form @submit.prevent="submitForm" v-else>
-    <div class="form-control">
-      <label for="email">Your E-Mail</label>
-      <input type="email" id="email" v-model.trim="email" />
-    </div>
-    <div class="form-control">
-      <label for="message"> Message</label>
-      <textarea rows="5" id="message" v-model.trim="message"></textarea>
-    </div>
-    <p class="errors" v-if="!isValid">
-      Check your input and re-submit the form
-    </p>
-    <p class="errors" v-else-if="error">
-      {{ error }}
-    </p>
-    <div class="actions">
-      <base-button>Send Message</base-button>
-    </div>
-  </form>
+  <main>
+    <base-spinner v-if="isLoading"></base-spinner>
+    <form @submit.prevent="submitForm" v-else>
+      <div class="form-control">
+        <label for="email">Your E-Mail</label>
+        <input type="email" id="email" v-model.trim="email" />
+      </div>
+      <div class="form-control">
+        <label for="message"> Message</label>
+        <textarea rows="5" id="message" v-model.trim="message"></textarea>
+      </div>
+      <p class="errors" v-if="!isValid">
+        Check your input and re-submit the form
+      </p>
+      <p class="errors" v-else-if="error">
+        {{ error }}
+      </p>
+      <div class="actions">
+        <base-button>Send Message</base-button>
+      </div>
+    </form>
+  </main>
 </template>
 
 <script>
