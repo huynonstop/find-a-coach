@@ -32,7 +32,7 @@ export default {
   props: ['id'],
   data() {
     return {
-      selectedCoach: null,
+      selectedCoach: {},
     };
   },
   computed: {
@@ -59,9 +59,12 @@ export default {
     },
   },
   created() {
-    this.selectedCoach = this.$store.getters['coaches/coaches'].find(
+    const coach = this.$store.getters['coaches/coaches'].find(
       c => c.id === this.id
     );
+    if (!coach) {
+      this.$router.replace('/coaches');
+    } else this.selectedCoach = coach;
   },
 };
 </script>

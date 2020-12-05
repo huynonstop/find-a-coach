@@ -1,8 +1,7 @@
 <template>
   <li>
     <div>
-      From: {{ userId }}
-      <a :href="emailLink">{{ email }}</a>
+      From: {{ userId || 'Anonymous' }}#<a :href="emailLink">{{ email }}</a>
     </div>
     <p>{{ message }}</p>
   </li>

@@ -74,10 +74,11 @@ export default {
           email: this.email,
           password: this.password,
         });
-        if (this.mode === 'signup') this.mode = 'login';
         if (this.mode === 'login') {
-          this.$router.replace('/coaches');
+          const redirectUrl = this.$route.query.red || 'coaches';
+          this.$router.replace('/' + redirectUrl);
         }
+        if (this.mode === 'signup') this.mode = 'login';
       } catch (error) {
         this.error =
           error.message ||
