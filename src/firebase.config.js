@@ -1,4 +1,4 @@
-const API_KEY = process.env.VUE_APP_API_KEY;
+const API_KEY = 'AIzaSyAMPWqntK3t_S4gxyeYxyuYo1E75CpiUNs';
 export default {
   databaseURL: 'https://find-coach-vuejs.firebaseio.com',
   API_KEY,
