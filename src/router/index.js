@@ -54,7 +54,8 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach(function(to, from, next) {
+router.beforeEach(async function(to, from, next) {
+  await store.dispatch('tryAuth');
   if (to.meta.needAuth && !store.getters.isAuth) {
     next('/auth');
   } else if (to.meta.needUnAuth && store.getters.isAuth) {

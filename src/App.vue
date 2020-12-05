@@ -12,9 +12,6 @@ export default {
   components: {
     BaseHeader,
   },
-  async created() {
-    await this.$store.dispatch('tryAuth');
-  },
 };
 </script>
 <style>

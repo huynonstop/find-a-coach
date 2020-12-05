@@ -28,6 +28,9 @@ export default createStore({
     isAuth(state) {
       return state.token && state.userId;
     },
+    isReady(state) {
+      return state.token !== null && state.userId !== null;
+    },
   },
   mutations: {
     setUser(state, { token, userId }) {
@@ -36,6 +39,12 @@ export default createStore({
     },
   },
   actions: {
+    firstLoad(context) {
+      context.commit('setUser', {
+        token: '',
+        userId: '',
+      });
+    },
     async login(context, { email, password }) {
       return context.dispatch('auth', {
         email,
@@ -123,8 +132,8 @@ export default createStore({
       localStorage.removeItem('user');
       clearTimeout(logoutTimer);
       context.commit('setUser', {
-        token: null,
-        userId: null,
+        token: '',
+        userId: '',
       });
     },
   },
