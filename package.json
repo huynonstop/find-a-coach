@@ -1,5 +1,6 @@
 {
   "name": "find-a-coach",
+  "license": "MIT",
   "version": "0.0.0",
   "scripts": {
     "dev": "vite --open",
