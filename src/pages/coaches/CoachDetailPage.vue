@@ -4,6 +4,7 @@ import { computed, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import type { CoachInfo } from './CoachesPage.vue';
 import useUserStore from '@/store/user';
+import { useError } from '@/hooks/useError';
 
 const userStore = useUserStore();
 const route = useRoute();
@@ -34,13 +35,13 @@ const fetchCoachDetail = async () => {
 const fullName = computed(() => {
   return `${coach.value?.firstName} ${coach.value?.lastName}`;
 });
-
+const [error, confirmError, setError] = useError();
 onMounted(async () => {
   try {
     isLoading.value = true;
     coach.value = await fetchCoachDetail();
   } catch (err) {
-    throw err;
+    setError(err, 'Fetch coach detail failed');
   } finally {
     isLoading.value = false;
   }
@@ -49,6 +50,7 @@ onMounted(async () => {
 
 <template>
   <main class="page coach-detail">
+    <BaseError :error="error" @confirm-error="confirmError"></BaseError>
     <BaseSpinner v-if="isLoading"></BaseSpinner>
     <BaseCard class="content-container coach-info" v-else>
       <div class="title">
@@ -65,13 +67,13 @@ onMounted(async () => {
         ></BaseBadge>
       </div>
     </BaseCard>
-    <div class="contact" v-if="!isUser">
+    <section class="contact" v-if="!isUser">
       <template v-if="route.name !== 'coach/contact'">
         <h4>Interested? Reach out now!</h4>
         <BaseButton as="router-link" :to="toCoachContact"> Contact </BaseButton>
       </template>
       <router-view></router-view>
-    </div>
+    </section>
   </main>
 </template>
 
@@ -91,9 +93,9 @@ h4 {
 }
 .coach-detail {
   max-width: 40rem;
-  margin: 4rem auto;
+  margin: 2rem auto;
   align-items: center;
-  gap: 1rem;
+  gap: 2rem;
 }
 
 .coach-info {
@@ -108,9 +110,10 @@ h4 {
 }
 
 .contact {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   gap: 1rem;
 }
 

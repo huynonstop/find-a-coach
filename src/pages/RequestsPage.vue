@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 import RequestItem from '@/components/RequestItem.vue';
 import FIREBASE_CONFIG from '@/firebase.config';
+import { useError } from '@/hooks/useError';
 import useUserStore from '@/store/user';
 import { computed, onMounted, ref } from 'vue';
+import BaseError from '../components/common/BaseError.vue';
 export interface RequestInfo {
   id: string;
   coachId: string;
@@ -14,34 +16,30 @@ export interface RequestInfo {
 const requests = ref<RequestInfo[]>([]);
 const userStore = useUserStore();
 const { userId, token } = userStore;
+
 const isLoading = ref(false);
+const [error, confirmError, setError] = useError();
+
 const loadRequests = async () => {
-  try {
-    isLoading.value = true;
-    const res = await fetch(
-      `${FIREBASE_CONFIG.DATABASE_URL}/requests/${userId}.json?auth=${token}`
-    );
-    const data = await res.json();
-    if (!res.ok) {
-      throw new Error(data.error?.message);
-    }
-    const requests: RequestInfo[] = [];
-    for (const id in data) {
-      const { email, message } = data[id];
-      requests.push({
-        id,
-        coachId: userId || '',
-        email,
-        message,
-        userId: data[id].userId,
-      });
-    }
-    return requests;
-  } catch (err) {
-    throw err;
-  } finally {
-    isLoading.value = false;
+  const res = await fetch(
+    `${FIREBASE_CONFIG.DATABASE_URL}/requests/${userId}.json?auth=${token}`
+  );
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error?.message);
   }
+  const requests: RequestInfo[] = [];
+  for (const id in data) {
+    const { email, message } = data[id];
+    requests.push({
+      id,
+      coachId: userId || '',
+      email,
+      message,
+      userId: data[id].userId,
+    });
+  }
+  return requests;
 };
 const filteredRequest = computed(() => {
   return requests.value.filter((request) => {
@@ -49,12 +47,20 @@ const filteredRequest = computed(() => {
   });
 });
 onMounted(async () => {
-  requests.value = await loadRequests();
+  try {
+    isLoading.value = true;
+    requests.value = await loadRequests();
+  } catch (err: any) {
+    setError(err, 'Load requests failed');
+  } finally {
+    isLoading.value = false;
+  }
 });
 </script>
 
 <template>
   <main class="page">
+    <BaseError :error="error" @confirmError="confirmError"></BaseError>
     <BaseCard class="content-container" :noShadow="true">
       <header>
         <h2>Request Received</h2>

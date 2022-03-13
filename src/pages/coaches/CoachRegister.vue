@@ -5,29 +5,38 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import type { CoachInfo } from './CoachesPage.vue';
 import CoachForm from '@/components/coaches/CoachForm.vue';
+import { useError } from '@/hooks/useError';
 
 const userStore = useUserStore();
 const router = useRouter();
 const { userId, token } = userStore;
 const isLoading = ref(false);
+const [error, confirmError, setError] = useError();
 const coachRegister = async ({ id, ...coachData }: CoachInfo) => {
-  isLoading.value = true;
-  const res = await fetch(
-    `${FIREBASE_CONFIG.DATABASE_URL}/coaches/${userId}.json?auth=${token}`,
-    {
-      method: 'PUT',
-      body: JSON.stringify(coachData),
+  try {
+    isLoading.value = true;
+    const res = await fetch(
+      `${FIREBASE_CONFIG.DATABASE_URL}/coaches/${userId}.json?auth=${token}`,
+      {
+        method: 'PUT',
+        body: JSON.stringify(coachData),
+      }
+    );
+    const data = await res.json();
+    if (!res.ok) {
+      throw Error(data.error?.message);
     }
-  );
-  const data = await res.json();
-  if (!res.ok) {
-    throw Error(data.error?.message);
+    router.replace('/coaches');
+  } catch (err: any) {
+    setError(err, 'Register Failed');
+  } finally {
+    isLoading.value = true;
   }
-  router.replace('/coaches');
 };
 </script>
 <template>
   <main class="page coach-register">
+    <BaseError :error="error" @confirm-error="confirmError"></BaseError>
     <BaseCard class="content-container register-group">
       <h2>Register to be a coach now!</h2>
       <CoachForm @submit-data="coachRegister"> </CoachForm>

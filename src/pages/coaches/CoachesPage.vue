@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import CoachFilter from '@/components/coaches/CoachFilter.vue';
 import FIREBASE_CONFIG from '@/firebase.config';
+import { useError } from '@/hooks/useError';
 import useUserStore from '@/store/user';
 import { ref, onMounted, computed } from 'vue';
 import CoachItem from '../../components/coaches/CoachItem.vue';
@@ -42,12 +43,13 @@ const fetchCoaches = async () => {
 };
 const coaches = ref<CoachInfo[]>([]);
 const isLoading = ref<boolean>(false);
+const [error, confirmError, setError] = useError();
 const loadCoaches = async () => {
   isLoading.value = true;
   try {
     coaches.value = await fetchCoaches();
   } catch (err) {
-    throw err;
+    setError(err, 'Load coaches failed');
   } finally {
     isLoading.value = false;
   }
@@ -75,6 +77,7 @@ onMounted(() => {
 
 <template>
   <main class="page">
+    <BaseError :error="error" @confirm-error="confirmError"></BaseError>
     <CoachFilter
       class="content-container filter"
       v-model:filter="coachFilter"

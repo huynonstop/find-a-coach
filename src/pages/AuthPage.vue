@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import FIREBASE_CONFIG, { AUTH_MODE } from '@/firebase.config';
+import { useError } from '@/hooks/useError';
 import useUserStore from '@/store/user';
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import BaseError from '../components/common/BaseError.vue';
 
 const userStore = useUserStore();
 const router = useRouter();
@@ -16,6 +18,8 @@ const password = ref('');
 const formIsValid = ref(true);
 const currentMode = ref('login');
 const isLoading = ref(false);
+
+const [error, confirmError, setError] = useError();
 
 const submitButtonCap = computed(() => {
   return currentMode.value;
@@ -38,6 +42,7 @@ const clearForm = () => {
   password.value = '';
 };
 const switchMode = () => {
+  formIsValid.value = true;
   currentMode.value = mode[currentMode.value];
 };
 
@@ -55,7 +60,6 @@ const submitForm = async () => {
   isLoading.value = true;
   const authMode = getAuthMode();
   const url = FIREBASE_CONFIG.authGoogleAPI(authMode);
-
   try {
     const res = await fetch(url, {
       method: 'POST',
@@ -65,7 +69,6 @@ const submitForm = async () => {
         returnSecureToken: true,
       }),
     });
-
     const { idToken, localId, expiresIn, error } = await res.json();
     if (!res.ok) {
       throw new Error(error?.message || '');
@@ -97,7 +100,7 @@ const submitForm = async () => {
     }
   } catch (err: any) {
     formIsValid.value = false;
-    throw err;
+    setError(err, 'Auth failed');
   } finally {
     isLoading.value = false;
     clearForm();
@@ -107,9 +110,7 @@ const submitForm = async () => {
 
 <template>
   <main class="page">
-    <BaseDialog :fixed="true" :show="isLoading" title="Authenticating...">
-      <BaseSpinner></BaseSpinner>
-    </BaseDialog>
+    <BaseError :error="error" @confirm-error="confirmError"></BaseError>
     <BaseCard class="content-container form-group">
       <form @submit.prevent="submitForm">
         <div class="form-control">
@@ -123,7 +124,8 @@ const submitForm = async () => {
         <p class="errors" v-if="!formIsValid">
           Please enter a valid email and password
         </p>
-        <div class="button-group">
+        <BaseSpinner v-if="isLoading"></BaseSpinner>
+        <div class="button-group" v-else>
           <BaseButton type="button" mode="flat" @click="switchMode">{{
             switchButtonCap
           }}</BaseButton>
@@ -146,6 +148,7 @@ main {
 
 form {
   width: 60%;
+  min-height: 18rem;
   display: flex;
   flex-direction: column;
   margin: 2rem;
@@ -153,6 +156,7 @@ form {
 }
 
 .button-group {
+  margin-top: auto;
   display: flex;
   gap: 1rem;
   justify-content: center;

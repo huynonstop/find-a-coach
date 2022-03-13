@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import BaseErrorBoundary from './components/BaseErrorBoundary.vue';
-import BaseSuspense from './components/BaseSuspense.vue';
+import { onErrorCaptured } from 'vue';
+
+onErrorCaptured((err) => {
+  console.log(err);
+});
 </script>
 
 <template>
   <router-view v-slot="{ Component, route }">
-    <BaseErrorBoundary>
-      <BaseHeader v-if="!route.meta?.customLayout"></BaseHeader>
-      <Transition name="fade" mode="out-in">
-        <component :is="Component"></component>
-      </Transition>
-    </BaseErrorBoundary>
+    <BaseHeader v-if="!route.meta?.customLayout"></BaseHeader>
+    <Transition name="fade" mode="out-in">
+      <component :is="Component"></component>
+    </Transition>
   </router-view>
 </template>
 

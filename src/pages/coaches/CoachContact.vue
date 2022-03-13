@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import FIREBASE_CONFIG from '@/firebase.config';
+import { useError } from '@/hooks/useError';
 import useUserStore from '@/store/user';
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -12,7 +13,7 @@ const email = ref('');
 const message = ref('');
 const isValid = ref(true);
 const isLoading = ref(false);
-
+const [error, confirmError, setError] = useError();
 const submitForm = async () => {
   try {
     isValid.value = true;
@@ -40,39 +41,34 @@ const submitForm = async () => {
     }
     router.replace({ name: 'coach', params: { id: coachId } });
   } catch (err) {
-    throw err;
+    setError(err, 'Contact failed');
   } finally {
     isLoading.value = false;
   }
 };
 </script>
-<template lang="">
-  <div>
-    <BaseSpinner v-if="isLoading"></BaseSpinner>
-    <form @submit.prevent="submitForm" v-else>
-      <div class="form-control">
-        <label for="email">Your E-Mail</label>
-        <input type="email" id="email" v-model.trim="email" />
-      </div>
-      <div class="form-control">
-        <label for="message"> Message</label>
-        <textarea rows="5" id="message" v-model.trim="message"></textarea>
-      </div>
-      <p class="errors" v-if="!isValid">
-        Check your input and re-submit the form
-      </p>
-      <p class="errors" v-else-if="error">
-        {{ error }}
-      </p>
-      <div class="actions">
-        <BaseButton>Send Message</BaseButton>
-      </div>
-    </form>
-  </div>
+<template>
+  <BaseError :error="error" @confirm-error="confirmError"></BaseError>
+  <BaseSpinner v-if="isLoading"></BaseSpinner>
+  <form @submit.prevent="submitForm" v-else>
+    <div class="form-control">
+      <label for="email">Your E-Mail</label>
+      <input type="email" id="email" v-model.trim="email" />
+    </div>
+    <div class="form-control">
+      <label for="message"> Message</label>
+      <textarea rows="5" id="message" v-model.trim="message"></textarea>
+    </div>
+    <p class="errors" v-if="!isValid">
+      Check your input and re-submit the form
+    </p>
+    <div class="actions">
+      <BaseButton>Send Message</BaseButton>
+    </div>
+  </form>
 </template>
 <style scoped>
 form {
-  margin: 1rem;
   border: 1px solid #ccc;
   border-radius: 12px;
   padding: 1rem;

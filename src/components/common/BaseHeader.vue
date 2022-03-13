@@ -8,7 +8,7 @@ const router = useRouter();
 const logout = () => {
   if (userStore.isAuth) {
     userStore.logout();
-    router.replace('/coaches');
+    router.replace('/auth');
   }
 };
 </script>
