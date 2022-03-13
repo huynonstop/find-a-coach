@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import FIREBASE_CONFIG, { AUTH_MODE } from '@/firebase.config';
-import useUserStore from '@/store/auth';
+import useUserStore from '@/store/user';
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 

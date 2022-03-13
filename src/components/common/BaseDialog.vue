@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 interface Props {
-  show: boolean;
+  show: boolean | null;
   title?: string;
   fixed?: boolean;
 }

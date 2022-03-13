@@ -1,15 +1,16 @@
 <script setup lang="ts">
+import BaseErrorBoundary from './components/BaseErrorBoundary.vue';
 import BaseSuspense from './components/BaseSuspense.vue';
 </script>
 
 <template>
   <router-view v-slot="{ Component, route }">
-    <BaseHeader v-if="!route.meta?.customLayout"></BaseHeader>
-    <transition name="fade" mode="out-in">
-      <BaseSuspense>
+    <BaseErrorBoundary>
+      <BaseHeader v-if="!route.meta?.customLayout"></BaseHeader>
+      <Transition name="fade" mode="out-in">
         <component :is="Component"></component>
-      </BaseSuspense>
-    </transition>
+      </Transition>
+    </BaseErrorBoundary>
   </router-view>
 </template>
 
@@ -20,13 +21,13 @@ import BaseSuspense from './components/BaseSuspense.vue';
   opacity: 0;
 }
 
-.route-enter-active,
-.route-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: all 0.3s ease-in;
 }
 
-.route-enter-to,
-.route-leave-from {
+.fade-enter-to,
+.fade-leave-from {
   opacity: 1;
 }
 </style>

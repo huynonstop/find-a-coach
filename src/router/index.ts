@@ -1,15 +1,15 @@
 import FIREBASE_CONFIG, { AUTH_MODE } from '@/firebase.config';
-import type { UserInfo } from './../store/auth';
-import { createRouter, createWebHistory, useRouter } from 'vue-router';
+import type { UserInfo } from '../store/user';
+import { createRouter, createWebHistory } from 'vue-router';
 import routes from './routes';
-import useUserStore from './../store/auth';
+import useUserStore from '../store/user';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
 });
 
-const tryAutoAuth = async (userStore: any, router: any): Promise<void> => {
+const tryAutoAuth = async (userStore: any, next: any): Promise<void> => {
   const userData = localStorage.getItem('user');
   if (!userData) {
     return;
@@ -26,7 +26,7 @@ const tryAutoAuth = async (userStore: any, router: any): Promise<void> => {
     }
     const res = await fetch(FIREBASE_CONFIG.authGoogleAPI(AUTH_MODE.LOOKUP), {
       method: 'POST',
-      body: JSON.stringify({ token }),
+      body: JSON.stringify({ idToken: token }),
     });
     const data = await res.json();
     if (!res.ok || userId !== data.users[0].localId) {
@@ -39,18 +39,18 @@ const tryAutoAuth = async (userStore: any, router: any): Promise<void> => {
     userStore.setAuthTimeout(
       setTimeout(() => {
         userStore.logout();
-        router.replace('/coaches');
+        next('/coaches');
       }, expiresIn)
     );
   } catch (error) {
+    userStore.logout();
     return;
   }
 };
 
 router.beforeEach(async (to, from, next) => {
   const userStore = useUserStore();
-  const router = useRouter();
-  await tryAutoAuth(userStore, router);
+  await tryAutoAuth(userStore, next);
   if (to.meta?.needAuth && !userStore.isAuth) {
     next('/auth');
   } else if (to.meta?.needUnAuth && userStore.isAuth) {

@@ -18,6 +18,9 @@ const useUserStore = defineStore('user', {
   getters: {
     isAuth: (state) => state.userId && state.token,
     isReady: (state) => !state.userId && !state.token,
+    isCoach: (state) => (coaches: { id: string }[]) =>
+      coaches.some((coach) => coach.id === state.userId),
+    isUser: (state) => (id: string) => id === state.userId,
   },
   actions: {
     setUser({ token, userId }: UserInfo) {

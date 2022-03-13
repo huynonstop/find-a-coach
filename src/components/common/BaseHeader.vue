@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import useUserStore from '@/store/auth';
+import useUserStore from '@/store/user';
 import { RouterLink, useRouter } from 'vue-router';
 import BaseButton from './BaseButton.vue';
 
